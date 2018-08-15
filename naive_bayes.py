@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 def word_document_count(df: pd.DataFrame):
@@ -27,7 +28,35 @@ def word_document_count(df: pd.DataFrame):
     return word2label2dc
 
 
+def word_prob(word2label2dc):
+
+    word2label2prob = dict()
+
+    for word, label2dc in word2label2dc.items():
+        sum = np.sum(list(label2dc.values()))
+        prob = dict()
+
+        if 0 in label2dc:
+            prob[0] = label2dc[0] / sum
+        else:
+            prob[0] = 0
+
+        if 1 in label2dc:
+            prob[1] = label2dc[1] / sum
+        else:
+            prob[1] = 0
+
+        word2label2prob[word] = prob
+
+
+    return word2label2prob
+
+
 def main():
     import load
     df = load.load_id_sent()
-    return word_document_count(df)
+    word2label2dc = word_document_count(df)
+    word2label2prob = word_prob(word2label2dc)
+
+    # pd.to_pickle(word2label2prob, "./data/word2label2prob")
+    return word2label2prob
