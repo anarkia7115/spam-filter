@@ -52,6 +52,10 @@ def word_prob(word2label2dc):
     return word2label2prob
 
 
+def sent_prob(sent:str, word2label2dc:dict):
+    return
+
+
 def main():
     import load
     df = load.load_id_sent()
