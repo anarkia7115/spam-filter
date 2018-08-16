@@ -78,10 +78,39 @@ def sent_list_to_id(df:pd.DataFrame, word2id):
         sent = row["sent"]
         id_sent = []
         for w in sent:
-            id_sent.append(word2id[w])
+            # check word in dict
+            if w in word2id:
+                id_sent.append(word2id[w])
+            else:  # if not skip
+            # TODO: train for unknown word?
+                pass
         return id_sent
 
     df["id_sent"] = df.apply(row_func_to_id, axis=1)
 
     # df.to_pickle("./data/id_sent.pkl")
     return df
+
+
+def main():
+    # load content (text set)
+    import load
+    content_file = "./data/content.txt"
+    sent_list = load.load_text(content_file)
+
+    # cut
+    sent_list = cut(sent_list)
+    df = pd.DataFrame(pd.Series(sent_list))
+    df.columns = ["sent"]
+
+    # load word2id
+    word2id = load.load_word_dict()
+
+    # to_id
+    df = sent_list_to_id(df, word2id)
+    df.to_pickle("./data/content.pkl")
+
+
+if __name__ == "__main__":
+    main()
+
