@@ -29,6 +29,10 @@ def load_word_prob():
     return pd.read_pickle("./data/word2label2prob")
 
 
+def load_test_df():
+    return pd.read_pickle("./data/content.pkl")
+
+
 def main():
     spam_file = "./data/spam.txt"
     sent_list = load_text(spam_file)

@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import math
 
 
 def word_document_count(df: pd.DataFrame):
@@ -49,18 +50,34 @@ def word_prob(word2label2dc):
         word2label2prob[word] = prob
 
 
+    # pd.to_pickle(word2label2prob, "./data/word2label2prob")
     return word2label2prob
 
 
-def sent_prob(sent:str, word2label2dc:dict):
-    return
+def sent_prob(sent:list, word2label2prob:dict):
+    eta = 0
+    for word_id in sent:
+        prob = word2label2prob[word_id][1]
+        if prob <= 0:
+            prob = 0.1
+        if prob >= 0.9:
+            prob = 0.9
+
+        # print(prob)
+        eta += (math.log(1-prob) - math.log(prob))
+
+    p = 1 / (1 + math.exp(eta))
+
+    return p
 
 
-def main():
+def main(test_df):
     import load
     df = load.load_id_sent()
     word2label2dc = word_document_count(df)
     word2label2prob = word_prob(word2label2dc)
 
-    # pd.to_pickle(word2label2prob, "./data/word2label2prob")
-    return word2label2prob
+    test_df["prob"] = test_df["id_sent"].apply(sent_prob, args=(word2label2prob,))
+
+
+    return test_df
